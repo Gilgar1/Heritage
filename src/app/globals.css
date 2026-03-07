@@ -1,26 +1,698 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-brown-500: #5C3A21;
+  --color-brown-400: #7a4f2e;
+  --color-brown-600: #422917;
+
+  --color-gold-500: #C6A75E;
+  --color-gold-400: #d4b872;
+  --color-gold-600: #a98d4d;
+
+  --color-cream-500: #F4EFE6;
+  --color-cream-400: #fcfbfa;
+  /* Almost white for cards */
+  --color-cream-600: #e5dac9;
+
+  --color-charcoal-500: #1F1F1F;
+  --color-charcoal-400: #3b3b3b;
+  --color-charcoal-300: #666666;
+
+  --color-green-500: #2F5D50;
+
+  --color-success: #2E7D32;
+  --color-warning: #ED8B00;
+  --color-danger: #C62828;
+  --color-info: #2563EB;
+
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =============================== */
+/*  BASE & RESET                  */
+/* =============================== */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brown-500) transparent;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background: var(--color-cream-500);
+  color: var(--color-charcoal-500);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* =============================== */
+/*  SCROLLBAR                      */
+/* =============================== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-brown-400);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brown-500);
+}
+
+/* =============================== */
+/*  CARDS                          */
+/* =============================== */
+.glass-card {
+  background: var(--color-cream-400);
+  border: 1px solid rgba(92, 58, 33, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  color: var(--color-charcoal-500);
+}
+
+.glass-card-hover:hover {
+  border-color: rgba(92, 58, 33, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* =============================== */
+/*  GRADIENTS & BACKGROUNDS        */
+/* =============================== */
+.gradient-heritage {
+  background: var(--color-brown-500);
+}
+
+.gradient-gold {
+  background: var(--color-gold-500);
+}
+
+.gradient-header {
+  background: var(--color-brown-500);
+  color: var(--color-cream-500);
+}
+
+.gradient-mesh {
+  background: var(--color-cream-500);
+}
+
+/* =============================== */
+/*  AVATAR                         */
+/* =============================== */
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-brown-500);
+}
+
+.avatar-ring {
+  box-shadow: 0 0 0 3px var(--color-gold-500), 0 0 0 5px rgba(92, 58, 33, 0.1);
+}
+
+/* =============================== */
+/*  STATUS BADGES                  */
+/* =============================== */
+.badge-deceased {
+  background: #fdfaf2;
+  border: 1px solid var(--color-gold-500);
+  color: var(--color-brown-600);
+}
+
+.badge-pending {
+  background: rgba(237, 139, 0, 0.1);
+  border: 1px solid var(--color-warning);
+  color: var(--color-brown-600);
+}
+
+.badge-approved {
+  background: rgba(46, 125, 50, 0.1);
+  border: 1px solid var(--color-success);
+  color: var(--color-brown-600);
+}
+
+.badge-rejected {
+  background: rgba(198, 40, 40, 0.1);
+  border: 1px solid var(--color-danger);
+  color: var(--color-brown-600);
+}
+
+.badge-role {
+  background: rgba(92, 58, 33, 0.1);
+  border: 1px solid rgba(92, 58, 33, 0.2);
+  color: var(--color-brown-600);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* =============================== */
+/*  BUTTONS                        */
+/* =============================== */
+.btn-primary {
+  background: var(--color-gold-500);
+  color: var(--color-charcoal-500);
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  background: var(--color-gold-600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(198, 167, 94, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-brown-500);
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-brown-500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-secondary:hover {
+  background: rgba(92, 58, 33, 0.05);
+}
+
+.btn-gold {
+  background: var(--color-gold-500);
+  color: var(--color-charcoal-500);
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(198, 167, 94, 0.3);
+}
+
+.btn-danger {
+  background: rgba(198, 40, 40, 0.05);
+  color: var(--color-danger);
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid rgba(198, 40, 40, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-danger:hover {
+  background: rgba(198, 40, 40, 0.1);
+}
+
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+.btn-icon {
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(92, 58, 33, 0.05);
+  border: 1px solid transparent;
+  color: var(--color-brown-500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background: rgba(92, 58, 33, 0.1);
+}
+
+.gradient-header .btn-icon {
+  color: var(--color-cream-500);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.gradient-header .btn-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* =============================== */
+/*  FORM INPUTS                    */
+/* =============================== */
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--color-cream-400);
+  border: 1px solid rgba(92, 58, 33, 0.2);
+  border-radius: 12px;
+  color: var(--color-charcoal-500);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: var(--color-brown-500);
+  box-shadow: 0 0 0 3px rgba(92, 58, 33, 0.1);
+}
+
+.input-field::placeholder {
+  color: var(--color-charcoal-300);
+}
+
+.input-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-brown-600);
+  margin-bottom: 6px;
+}
+
+/* =============================== */
+/*  ANIMATIONS                     */
+/* =============================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* =============================== */
+/*  PRIVACY INDICATOR              */
+/* =============================== */
+.privacy-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.privacy-public {
+  background: rgba(46, 125, 50, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(46, 125, 50, 0.2);
+}
+
+.privacy-private {
+  background: rgba(198, 40, 40, 0.1);
+  color: var(--color-danger);
+  border: 1px solid rgba(198, 40, 40, 0.2);
+}
+
+.privacy-unlisted {
+  background: rgba(237, 139, 0, 0.1);
+  color: var(--color-warning);
+  border: 1px solid rgba(237, 139, 0, 0.2);
+}
+
+/* =============================== */
+/*  FAMILY TREE CANVAS             */
+/* =============================== */
+.tree-node {
+  transition: all 0.3s ease;
+}
+
+.tree-node:hover {
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.tree-connector {
+  stroke: var(--color-brown-400);
+  stroke-width: 2;
+  fill: none;
+  opacity: 0.6;
+}
+
+/* =============================== */
+/*  TABS                           */
+/* =============================== */
+.tab-item {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-charcoal-400);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-item:hover {
+  color: var(--color-brown-600);
+}
+
+.tab-item.active {
+  color: var(--color-brown-500);
+  border-bottom-color: var(--color-brown-500);
+}
+
+/* =============================== */
+/*  MOBILE BOTTOM NAV              */
+/* =============================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-cream-400);
+  border-top: 1px solid rgba(92, 58, 33, 0.1);
+  z-index: 50;
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* =============================== */
+/*  OVERLAY / MODAL                */
+/* =============================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 31, 31, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  background: var(--color-cream-400);
+  border: 1px solid rgba(92, 58, 33, 0.1);
+  border-radius: 20px;
+  max-width: 560px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: fadeInUp 0.3s ease;
+  color: var(--color-charcoal-500);
+}
+
+/* OVERRIDE utility colors since we changed themes */
+.text-surface-100 {
+  color: var(--color-charcoal-500);
+}
+
+.text-surface-200 {
+  color: var(--color-charcoal-500);
+}
+
+.text-surface-300 {
+  color: var(--color-charcoal-400);
+}
+
+.text-surface-400 {
+  color: var(--color-charcoal-400);
+}
+
+.text-surface-500 {
+  color: var(--color-charcoal-300);
+}
+
+.text-heritage-300 {
+  color: var(--color-brown-400);
+}
+
+.text-heritage-400 {
+  color: var(--color-brown-500);
+}
+
+.text-gold-400 {
+  color: var(--color-gold-600);
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+.bg-surface-800 {
+  background-color: var(--color-cream-600);
+}
+
+.bg-surface-900 {
+  background-color: var(--color-cream-500);
+}
+
+.border-white\/5 {
+  border-color: rgba(92, 58, 33, 0.1);
+}
+
+.border-white\/10 {
+  border-color: rgba(92, 58, 33, 0.15);
+}
+
+.hover\:bg-white\/5:hover {
+  background-color: rgba(92, 58, 33, 0.05);
+}
+
+/* specific components */
+.divide-white\/5> :not([hidden])~ :not([hidden]) {
+  border-color: rgba(92, 58, 33, 0.1);
+}
+
+/* =============================== */
+/*  NEW FEATURE UTILITIES          */
+/* =============================== */
+
+/* Line clamp */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+/* Verified badge */
+.badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 700;
+  background: rgba(198, 167, 94, 0.15);
+  border: 1px solid rgba(198, 167, 94, 0.35);
+  color: #5C3A21;
+}
+
+/* Memorial candle glow */
+@keyframes candleFlicker {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.candle-icon {
+  animation: candleFlicker 1.5s ease-in-out infinite;
+}
+
+/* Reaction pill */
+.reaction-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(92, 58, 33, 0.15);
+  background: rgba(92, 58, 33, 0.04);
+  color: #3b3b3b;
+  transition: all 0.15s ease;
+}
+
+.reaction-pill:hover {
+  background: rgba(92, 58, 33, 0.1);
+  border-color: rgba(92, 58, 33, 0.25);
+}
+
+.reaction-pill.active {
+  background: rgba(92, 58, 33, 0.1);
+  border-color: #5C3A21;
+  color: #5C3A21;
+}
+
+/* Tribe tag */
+.tribe-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #F4EFE6;
+  border: 1px solid rgba(92, 58, 33, 0.15);
+  color: #5C3A21;
+}
+
+/* Event RSVP button active */
+.rsvp-going {
+  background: rgba(46, 125, 50, 0.1);
+  border-color: #2E7D32;
+  color: #2E7D32;
+}
+
+.rsvp-maybe {
+  background: rgba(237, 139, 0, 0.1);
+  border-color: #ED8B00;
+  color: #ED8B00;
+}
+
+.rsvp-not-going {
+  background: rgba(198, 40, 40, 0.08);
+  border-color: #C62828;
+  color: #C62828;
+}
+
+/* Governance vote bar */
+.vote-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(92, 58, 33, 0.1);
+  overflow: hidden;
+}
+
+.vote-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: #5C3A21;
+  transition: width 0.4s ease;
+}
+
+/* Table row hover */
+.table-row-hover:hover {
+  background: #F4EFE6;
+}
+
+/* Notification dot */
+.notification-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ED8B00;
+  flex-shrink: 0;
+}
+
+/* Streak indicator */
+@keyframes streakPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(198, 167, 94, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(198, 167, 94, 0);
+  }
+}
+
+.streak-active {
+  animation: streakPulse 2s infinite;
+}
+
+/* Status chip */
+.status-active {
+  background: rgba(46, 125, 50, 0.1);
+  color: #2E7D32;
+  border: 1px solid rgba(46, 125, 50, 0.25);
+}
+
+.status-frozen {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563EB;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.status-pending {
+  background: rgba(237, 139, 0, 0.1);
+  color: #ED8B00;
+  border: 1px solid rgba(237, 139, 0, 0.25);
+}
+
+.status-deleted {
+  background: rgba(198, 40, 40, 0.08);
+  color: #C62828;
+  border: 1px solid rgba(198, 40, 40, 0.2);
 }
