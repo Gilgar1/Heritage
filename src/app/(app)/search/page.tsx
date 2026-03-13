@@ -40,15 +40,16 @@ export default function SearchPage() {
 
     const filteredResults = useMemo(() => {
         let r = rawResults;
-        if (filterTribe) r = r.filter(x => x.tribe?.toLowerCase().includes(filterTribe.toLowerCase()));
-        if (filterRegion) r = r.filter(x => x.region?.toLowerCase().includes(filterRegion.toLowerCase()));
-        if (filterVillage) r = r.filter(x => x.village?.toLowerCase().includes(filterVillage.toLowerCase()));
+        if (filterTribe) r = r.filter(x => x.metadata?.tribe?.toLowerCase().includes(filterTribe.toLowerCase()));
+        if (filterRegion) r = r.filter(x => x.metadata?.region?.toLowerCase().includes(filterRegion.toLowerCase()));
+        if (filterVillage) r = r.filter(x => x.metadata?.village?.toLowerCase().includes(filterVillage.toLowerCase()));
         if (filterVerified) r = r.filter(x => (x as any).verificationStatus === 'verified');
         if (filterDeceased) r = r.filter(x => (x as any).isDeceased);
         if (filterMinAge || filterMaxAge) {
             const now = new Date().getFullYear();
             r = r.filter(x => {
-                const birthYear = x.birthDate ? new Date(x.birthDate as string).getFullYear() : null;
+                const birthDateStr = x.metadata?.birthDate;
+                const birthYear = birthDateStr ? new Date(birthDateStr).getFullYear() : null;
                 if (!birthYear) return false;
                 const age = now - birthYear;
                 if (filterMinAge && age < parseInt(filterMinAge)) return false;

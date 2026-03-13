@@ -3,8 +3,21 @@ import { User, Family, FamilyMembership, FamilyTreeNode, Post, FriendRequest, Fr
 // ==========================================
 // MOCK USERS
 // ==========================================
+const defaultUserFlags = {
+    verificationStatus: 'unverified' as const,
+    profileVisibility: 'public' as const,
+    blockedUserIds: [] as string[],
+    notifyFriendRequests: true,
+    notifyTributes: true,
+    notifyFamilyEvents: true,
+    notifyTreeEdits: true,
+    notifyMessages: true,
+    notifyGovernance: true,
+};
+
 export const mockUsers: User[] = [
     {
+        ...defaultUserFlags,
         id: 'user-1',
         email: 'ambe.nkeng@heritage.cm',
         fullName: 'Ambe Nkeng',
@@ -29,6 +42,7 @@ export const mockUsers: User[] = [
         coverPhotoUrl: '',
     },
     {
+        ...defaultUserFlags,
         id: 'user-2',
         email: 'ngono.meka@heritage.cm',
         fullName: 'Ngono Meka',
@@ -52,6 +66,7 @@ export const mockUsers: User[] = [
         coverPhotoUrl: '',
     },
     {
+        ...defaultUserFlags,
         id: 'user-3',
         email: 'tabi.eyong@heritage.cm',
         fullName: 'Tabi Eyong',
@@ -76,6 +91,7 @@ export const mockUsers: User[] = [
         coverPhotoUrl: '',
     },
     {
+        ...defaultUserFlags,
         id: 'user-4',
         email: 'deceased@heritage.cm',
         fullName: 'Pa Nkeng Fomonyuy',
@@ -101,6 +117,7 @@ export const mockUsers: User[] = [
         coverPhotoUrl: '',
     },
     {
+        ...defaultUserFlags,
         id: 'user-5',
         email: 'fien.njoya@heritage.cm',
         fullName: 'Fien Njoya',
@@ -145,6 +162,8 @@ export const mockFamilies: Family[] = [
             { userId: 'user-5', familyId: 'family-1', role: 'member', joinedAt: '2026-02-01T10:00:00Z' },
         ],
         coverPhotoUrl: '',
+        custodians: ['user-1'],
+        treeVisibility: 'public',
     },
     {
         id: 'family-2',
@@ -160,6 +179,8 @@ export const mockFamilies: Family[] = [
             { userId: 'user-1', familyId: 'family-2', role: 'member', joinedAt: '2026-02-05T10:00:00Z' },
         ],
         coverPhotoUrl: '',
+        custodians: ['user-3'],
+        treeVisibility: 'private',
     },
     {
         id: 'family-3',
@@ -174,6 +195,8 @@ export const mockFamilies: Family[] = [
             { userId: 'user-5', familyId: 'family-3', role: 'creator', joinedAt: '2026-01-20T10:00:00Z', canApproveTributes: true },
         ],
         coverPhotoUrl: '',
+        custodians: ['user-5'],
+        treeVisibility: 'public',
     },
 ];
 
@@ -194,6 +217,7 @@ export const mockFamilyTreeNodes: Record<string, FamilyTreeNode[]> = {
             spouseIds: ['node-2'],
             childIds: ['node-3', 'node-4'],
             generation: 0,
+            nodePrivacy: 'visible',
         },
         {
             id: 'node-2',
@@ -207,6 +231,7 @@ export const mockFamilyTreeNodes: Record<string, FamilyTreeNode[]> = {
             spouseIds: ['node-1'],
             childIds: ['node-3', 'node-4'],
             generation: 0,
+            nodePrivacy: 'visible',
         },
         {
             id: 'node-3',
@@ -219,6 +244,7 @@ export const mockFamilyTreeNodes: Record<string, FamilyTreeNode[]> = {
             spouseIds: ['node-5'],
             childIds: ['node-6'],
             generation: 1,
+            nodePrivacy: 'visible',
         },
         {
             id: 'node-4',
@@ -231,6 +257,7 @@ export const mockFamilyTreeNodes: Record<string, FamilyTreeNode[]> = {
             spouseIds: [],
             childIds: [],
             generation: 1,
+            nodePrivacy: 'visible',
         },
         {
             id: 'node-5',
@@ -243,6 +270,7 @@ export const mockFamilyTreeNodes: Record<string, FamilyTreeNode[]> = {
             spouseIds: ['node-3'],
             childIds: ['node-6'],
             generation: 1,
+            nodePrivacy: 'visible',
         },
         {
             id: 'node-6',
@@ -255,6 +283,7 @@ export const mockFamilyTreeNodes: Record<string, FamilyTreeNode[]> = {
             spouseIds: [],
             childIds: [],
             generation: 2,
+            nodePrivacy: 'visible',
         },
     ],
 };
@@ -271,6 +300,8 @@ export const mockPosts: Post[] = [
         images: [],
         type: 'regular',
         likes: ['user-2', 'user-3', 'user-5'],
+        reactions: [],
+        visibility: 'public',
         comments: [
             {
                 id: 'comment-1',
@@ -278,6 +309,7 @@ export const mockPosts: Post[] = [
                 authorName: 'Ngono Meka',
                 content: 'This is beautiful! Heritage is connecting us all. 🙌',
                 createdAt: '2026-02-15T10:30:00Z',
+                replies: [],
             },
         ],
         createdAt: '2026-02-15T09:00:00Z',
@@ -290,6 +322,8 @@ export const mockPosts: Post[] = [
         images: [],
         type: 'regular',
         likes: ['user-1'],
+        reactions: [],
+        visibility: 'public',
         comments: [],
         createdAt: '2026-02-14T15:00:00Z',
     },
@@ -304,6 +338,8 @@ export const mockPosts: Post[] = [
         familyId: 'family-1',
         targetDeceasedId: 'user-4',
         likes: ['user-2', 'user-3', 'user-5'],
+        reactions: [],
+        visibility: 'public',
         comments: [
             {
                 id: 'comment-2',
@@ -311,6 +347,7 @@ export const mockPosts: Post[] = [
                 authorName: 'Fien Njoya',
                 content: 'May his memory be eternal. Beautiful tribute. 🙏',
                 createdAt: '2026-02-13T12:00:00Z',
+                replies: [],
             },
         ],
         createdAt: '2026-02-13T08:00:00Z',
@@ -323,6 +360,8 @@ export const mockPosts: Post[] = [
         images: [],
         type: 'regular',
         likes: ['user-1', 'user-2'],
+        reactions: [],
+        visibility: 'public',
         comments: [],
         createdAt: '2026-02-12T18:00:00Z',
     },
@@ -334,6 +373,8 @@ export const mockPosts: Post[] = [
         images: [],
         type: 'regular',
         likes: ['user-1', 'user-3', 'user-5'],
+        reactions: [],
+        visibility: 'public',
         comments: [
             {
                 id: 'comment-3',
@@ -341,6 +382,7 @@ export const mockPosts: Post[] = [
                 authorName: 'Ambe Nkeng',
                 content: 'Exactly! Governance-protected tributes ensure respect. 💯',
                 createdAt: '2026-02-11T09:30:00Z',
+                replies: [],
             },
         ],
         createdAt: '2026-02-11T08:00:00Z',
@@ -384,6 +426,7 @@ export const mockConversations: Conversation[] = [
             senderId: 'user-2',
             senderName: 'Ngono Meka',
             content: 'Have you added the new branch to the Nkeng tree yet?',
+            messageType: 'text',
             read: false,
             createdAt: '2026-02-20T14:00:00Z',
         },
@@ -400,6 +443,7 @@ export const mockConversations: Conversation[] = [
             senderId: 'user-1',
             senderName: 'Ambe Nkeng',
             content: 'Welcome to the Nkeng Dynasty family thread! 🎉',
+            messageType: 'text',
             read: true,
             createdAt: '2026-02-18T10:00:00Z',
         },
@@ -415,13 +459,13 @@ export const mockConversations: Conversation[] = [
 // ==========================================
 export const mockMessages: Record<string, Message[]> = {
     'conv-1': [
-        { id: 'msg-1a', senderId: 'user-1', senderName: 'Ambe Nkeng', content: 'Hey Ngono! Thanks for editing the family tree.', read: true, createdAt: '2026-02-20T13:00:00Z' },
-        { id: 'msg-1b', senderId: 'user-2', senderName: 'Ngono Meka', content: 'No problem! Happy to help preserve the Nkeng legacy.', read: true, createdAt: '2026-02-20T13:15:00Z' },
-        { id: 'msg-1c', senderId: 'user-2', senderName: 'Ngono Meka', content: 'Have you added the new branch to the Nkeng tree yet?', read: false, createdAt: '2026-02-20T14:00:00Z' },
+        { id: 'msg-1a', senderId: 'user-1', senderName: 'Ambe Nkeng', content: 'Hey Ngono! Thanks for editing the family tree.', messageType: 'text', read: true, createdAt: '2026-02-20T13:00:00Z' },
+        { id: 'msg-1b', senderId: 'user-2', senderName: 'Ngono Meka', content: 'No problem! Happy to help preserve the Nkeng legacy.', messageType: 'text', read: true, createdAt: '2026-02-20T13:15:00Z' },
+        { id: 'msg-1c', senderId: 'user-2', senderName: 'Ngono Meka', content: 'Have you added the new branch to the Nkeng tree yet?', messageType: 'text', read: false, createdAt: '2026-02-20T14:00:00Z' },
     ],
     'conv-2': [
-        { id: 'msg-2a', senderId: 'user-1', senderName: 'Ambe Nkeng', content: 'Welcome to the Nkeng Dynasty family thread! 🎉', read: true, createdAt: '2026-02-18T10:00:00Z' },
-        { id: 'msg-2b', senderId: 'user-5', senderName: 'Fien Njoya', content: 'Honoured to be part of this family. Looking forward to contributing!', read: true, createdAt: '2026-02-18T11:00:00Z' },
+        { id: 'msg-2a', senderId: 'user-1', senderName: 'Ambe Nkeng', content: 'Welcome to the Nkeng Dynasty family thread! 🎉', messageType: 'text', read: true, createdAt: '2026-02-18T10:00:00Z' },
+        { id: 'msg-2b', senderId: 'user-5', senderName: 'Fien Njoya', content: 'Honoured to be part of this family. Looking forward to contributing!', messageType: 'text', read: true, createdAt: '2026-02-18T11:00:00Z' },
     ],
 };
 
@@ -477,7 +521,7 @@ export const mockSearchResults: SearchResult[] = [
         name: u.fullName,
         avatarUrl: u.avatarUrl,
         subtitle: `${u.tribe || ''} · ${u.village || ''}`,
-        metadata: { region: u.region || '', tribe: u.tribe || '', village: u.village || '' },
+        metadata: { region: u.region || '', tribe: u.tribe || '', village: u.village || '', birthDate: u.birthDate || '' },
     })),
     ...mockFamilies.map(f => ({
         type: 'family' as const,

@@ -17,6 +17,64 @@ function FamilyTreeView({ familyId }: { familyId: string }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(nodes.map(n => n.id)));
 
+    // For SVG links
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const nodeRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
+    const [links, setLinks] = useState<{ id: string, path: string, type: 'parent' | 'spouse' }[]>([]);
+
+    React.useEffect(() => {
+        const computeLinks = () => {
+            if (!containerRef.current) return;
+            const containerRect = containerRef.current.getBoundingClientRect();
+
+            const newLinks: { id: string, path: string, type: 'parent' | 'spouse' }[] = [];
+            const drawnSpouses = new Set<string>();
+
+            nodes.forEach(node => {
+                const el = nodeRefs.current[node.id];
+                if (!el) return;
+                const rect = el.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2 - containerRect.left;
+                const cy = rect.top + rect.height / 2 - containerRect.top;
+
+                // Parent links (smooth vertical curves)
+                node.parentIds.forEach(pid => {
+                    const pEl = nodeRefs.current[pid];
+                    if (!pEl) return;
+                    const pRect = pEl.getBoundingClientRect();
+                    const px = pRect.left + pRect.width / 2 - containerRect.left;
+                    const py = pRect.top + pRect.height / 2 - containerRect.top;
+
+                    // Quadratic bezier top-to-bottom
+                    const path = `M ${px} ${py} C ${px} ${(py + cy) / 2}, ${cx} ${(py + cy) / 2}, ${cx} ${cy}`;
+                    newLinks.push({ id: `p-${pid}-${node.id}`, path, type: 'parent' });
+                });
+
+                // Spouse links (dashed straight or small curve)
+                node.spouseIds.forEach(sid => {
+                    const linkId = [node.id, sid].sort().join('-');
+                    if (drawnSpouses.has(linkId)) return;
+                    drawnSpouses.add(linkId);
+
+                    const sEl = nodeRefs.current[sid];
+                    if (!sEl) return;
+                    const sRect = sEl.getBoundingClientRect();
+                    const sx = sRect.left + sRect.width / 2 - containerRect.left;
+                    const sy = sRect.top + sRect.height / 2 - containerRect.top;
+
+                    // Just a straight dashed line between centers looks fine since they're in same generation row usually
+                    const path = `M ${cx} ${cy} L ${sx} ${sy}`;
+                    newLinks.push({ id: `s-${linkId}`, path, type: 'spouse' });
+                });
+            });
+            setLinks(newLinks);
+        };
+
+        const timer = setTimeout(computeLinks, 50); // slight delay to allow layout completion
+        window.addEventListener('resize', computeLinks);
+        return () => { clearTimeout(timer); window.removeEventListener('resize', computeLinks); };
+    }, [nodes, expandedNodes]);
+
     const toggleNode = (id: string) => {
         setExpandedNodes(prev => {
             const next = new Set(prev);
@@ -88,26 +146,40 @@ function FamilyTreeView({ familyId }: { familyId: string }) {
             )}
 
             {/* Tree Visualization */}
-            <div className="overflow-x-auto pb-4">
-                <div className="min-w-[600px]">
+            <div className="overflow-x-auto overflow-y-hidden pb-12 pt-4 relative min-h-[400px]" ref={containerRef}>
+                <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" style={{ minWidth: 800 }}>
+                    {links.map(link => (
+                        <path
+                            key={link.id}
+                            d={link.path}
+                            fill="none"
+                            stroke={link.type === 'parent' ? '#C6A75E' : '#C6A75E'}
+                            strokeWidth={link.type === 'parent' ? 2.5 : 2}
+                            strokeDasharray={link.type === 'spouse' ? '6,6' : 'none'}
+                            strokeOpacity={link.type === 'parent' ? 0.6 : 0.4}
+                            className="transition-all duration-300 ease-in-out"
+                        />
+                    ))}
+                </svg>
+                <div className="min-w-[800px] relative z-10 flex flex-col items-center">
                     {generationKeys.map((gen, genIndex) => (
-                        <div key={gen} className="relative">
+                        <div key={gen} className="relative w-full mb-16">
                             {/* Generation Label */}
-                            <div className="flex items-center gap-2 mb-3">
-                                <span className="text-xs font-semibold text-surface-500 uppercase tracking-wider">
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                <span className="text-xs font-semibold text-surface-500 uppercase tracking-wider bg-[#F4EFE6] px-2 rounded hidden lg:block border border-surface-200" style={{ background: '#fcfbfa' }}>
                                     Generation {gen + 1}
                                 </span>
-                                <div className="flex-1 h-px bg-white/5" />
                             </div>
 
                             {/* Nodes Row */}
-                            <div className="flex flex-wrap gap-4 justify-center mb-8">
+                            <div className="flex flex-wrap gap-10 justify-center">
                                 {generations[gen].map(node => (
                                     <div
                                         key={node.id}
+                                        ref={el => { nodeRefs.current[node.id] = el; }}
                                         onClick={() => toggleNode(node.id)}
-                                        className={`glass-card p-4 min-w-[160px] cursor-pointer transition-all hover:border-heritage-500/40 group ${node.isDeceased ? 'border-gold-500/20' : ''
-                                            }`}
+                                        className={`glass-card p-4 min-w-[140px] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-lg group bg-white ${node.isDeceased ? 'border-gold-500/20' : ''}`}
+                                        style={{ background: '#fcfbfa', border: '1px solid rgba(92,58,33,0.1)' }}
                                     >
                                         <div className="flex flex-col items-center text-center">
                                             <Avatar
@@ -116,44 +188,33 @@ function FamilyTreeView({ familyId }: { familyId: string }) {
                                                 size="md"
                                                 isDeceased={node.isDeceased}
                                             />
-                                            <p className="font-semibold text-sm text-surface-100 mt-2 group-hover:text-heritage-300 transition-colors">
+                                            <p className="font-semibold text-sm mt-3 group-hover:text-heritage-500 transition-colors" style={{ color: '#1F1F1F' }}>
                                                 {node.name}
                                             </p>
                                             {node.birthDate && (
-                                                <p className="text-xs text-surface-500 mt-0.5">
+                                                <p className="text-xs mt-1" style={{ color: '#888' }}>
                                                     b. {new Date(node.birthDate).getFullYear()}
                                                     {node.deathDate && ` — d. ${new Date(node.deathDate).getFullYear()}`}
                                                 </p>
                                             )}
                                             {node.isDeceased && (
-                                                <span className="badge-deceased text-xs px-2 py-0.5 rounded-full mt-1.5 flex items-center gap-1">
-                                                    🕊️ Deceased
+                                                <span className="text-[10px] px-2 py-0.5 rounded-full mt-2 flex items-center gap-1 font-semibold" style={{ background: '#e5dac9', color: '#8c7644' }}>
+                                                    🕊️ Passed
                                                 </span>
                                             )}
                                             {/* Relationship Indicators */}
-                                            <div className="flex gap-1 mt-2">
-                                                {node.spouseIds.length > 0 && (
-                                                    <span className="text-[10px] text-heritage-400 bg-heritage-600/10 px-1.5 py-0.5 rounded">
-                                                        💍 {node.spouseIds.length}
-                                                    </span>
-                                                )}
-                                                {node.childIds.length > 0 && (
-                                                    <span className="text-[10px] text-gold-400 bg-gold-500/10 px-1.5 py-0.5 rounded">
-                                                        👶 {node.childIds.length}
-                                                    </span>
-                                                )}
+                                            <div className="flex gap-2 mt-2 border-t border-dashed w-full justify-center pt-2 border-surface-200">
+                                                <span className="text-[10px] font-medium" style={{ color: '#666' }}>
+                                                    💍 {node.spouseIds.length}
+                                                </span>
+                                                <span className="text-[10px] font-medium" style={{ color: '#666' }}>
+                                                    👶 {node.childIds.length}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
-
-                            {/* Connector lines */}
-                            {genIndex < generationKeys.length - 1 && (
-                                <div className="flex justify-center mb-2">
-                                    <div className="w-px h-6 bg-heritage-600/30" />
-                                </div>
-                            )}
                         </div>
                     ))}
                 </div>

@@ -147,6 +147,15 @@ export function HeritageProvider({ children }: { children: ReactNode }) {
             connectionsVisible: true,
             profileVisible: true,
             coverPhotoUrl: '',
+            verificationStatus: 'unverified',
+            profileVisibility: 'public',
+            blockedUserIds: [],
+            notifyFriendRequests: true,
+            notifyTributes: true,
+            notifyFamilyEvents: true,
+            notifyTreeEdits: true,
+            notifyMessages: true,
+            notifyGovernance: true,
         };
         setUsers(prev => [...prev, newUser]);
         setCurrentUser(newUser);
@@ -195,6 +204,8 @@ export function HeritageProvider({ children }: { children: ReactNode }) {
                 canApproveTributes: true,
             }],
             coverPhotoUrl: data.coverPhotoUrl || '',
+            custodians: [currentUser?.id || ''],
+            treeVisibility: 'public',
         };
         setFamilies(prev => [...prev, newFamily]);
         return newFamily;
@@ -347,6 +358,7 @@ export function HeritageProvider({ children }: { children: ReactNode }) {
             senderName: currentUser.fullName,
             senderAvatar: currentUser.avatarUrl,
             content,
+            messageType: 'text',
             read: false,
             createdAt: new Date().toISOString(),
         };
